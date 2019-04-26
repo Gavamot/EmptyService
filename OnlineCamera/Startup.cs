@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
+using Serilog.Events;
 
 namespace OnlineCamera
 {
@@ -25,6 +27,14 @@ namespace OnlineCamera
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .CreateLogger();
+
             services.AddApiVersioning(o =>
             {
                 o.ReportApiVersions = true;
@@ -49,7 +59,7 @@ namespace OnlineCamera
                 routes.MapControllers();
             });
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
         }
     }
 }
