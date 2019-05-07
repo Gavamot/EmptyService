@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28822.285
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineCamera.Test1", "OnlineCamera.Test\OnlineCamera.Test1.csproj", "{177527C0-1B3C-4F20-BD3A-4565AD3F8D0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineCamera.Test", "OnlineCamera.Test\OnlineCamera.Test.csproj", "{177527C0-1B3C-4F20-BD3A-4565AD3F8D0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineCamera.Api", "OnlineCamera.Api\OnlineCamera.Api.csproj", "{E4AA6587-3D7C-4FF8-B70A-6EF8C55A7A88}"
 EndProject
