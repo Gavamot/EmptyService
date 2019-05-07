@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace OnlineCamera
+{
+    public class Config
+    {
+        public string IpFile { get; set; }
+        public int IvePollIntervalSecond { get; set; }
+        public int MaxFps { get; set; }
+        /// <summary>
+        /// Количество попыток после которого прекращаем брать видео с камеры
+        /// </summary>
+        public int CountOfTrys { get; set; }
+
+        public int TimeoutSecond { get; set; }
+
+    }
+}

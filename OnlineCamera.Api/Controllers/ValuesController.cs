@@ -3,23 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Serilog;
 
-namespace OnlineCamera.Controllers
+namespace OnlineCamera.Api.Controllers
 {
     [ApiVersion("1.0", Deprecated = false)]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        //Config config { get; set; }
-  
-        public ValuesController()//(IOptions<Config> config)
-        {
-            //this.config = config.Value;
-        }
-
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
