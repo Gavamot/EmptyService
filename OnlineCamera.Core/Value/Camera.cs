@@ -1,4 +1,4 @@
-﻿namespace OnlineCamera.Value
+﻿namespace OnlineCamera.Core
 {
     public class Camera
     {

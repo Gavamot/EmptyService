@@ -1,8 +1,6 @@
 using FakeItEasy;
 using NUnit.Framework;
-using OnlineCamera.Service;
 using OnlineCamera.Test;
-using OnlineCamera.Value;
 using System;
 using System.Collections.Generic;
 
@@ -11,8 +9,8 @@ namespace Tests
     [TestFixture]
     public class CameraCacheTest : BaseTest
     {
-        private VideoRegCache cache;
-        IDateService timeService;
+        //private VideoRegCache cache;
+      /*  IDateService timeService;
 
         private CameraResponce GetResponce(DateTime date)
         {
@@ -77,6 +75,6 @@ namespace Tests
             };
             var res = cache.GetCameras();
             AreEqual(actual, res);
-        }
+        }*/
     }
 }

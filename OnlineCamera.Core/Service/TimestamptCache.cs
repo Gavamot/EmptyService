@@ -1,10 +1,10 @@
 ﻿using OnlineCamera.Core;
 using OnlineCamera.Core.Config;
-using OnlineCamera.Value;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
-namespace OnlineCamera.Service
+namespace OnlineCamera.Core
 {
     public class TimestamptCache<TKey, TValue>
     {
@@ -13,10 +13,47 @@ namespace OnlineCamera.Service
             public TKey Key { get; set; }
             public DateTime ServiceTimestamp { get; set; }
             public DateTime SourceTimestamp { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                return obj is TimestamptCacheKey key &&
+                    EqualityComparer<TKey>.Default.Equals(Key, key.Key);
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = -2016576744;
+                hashCode = hashCode * -1521134295 + EqualityComparer<TKey>.Default.GetHashCode(Key);
+                return hashCode;
+            }
+
+            public static bool operator ==(TimestamptCacheKey x, TimestamptCacheKey y)
+                => x.Key.Equals(y.Key);
+
+            public static bool operator !=(TimestamptCacheKey x, TimestamptCacheKey y)
+                => !x.Key.Equals(y.Key);
+            
         }
 
         protected readonly IDateService dateService;
-        public readonly  ConcurrentDictionary<TKey, TValue> cache = new ConcurrentDictionary<TKey, TValue>();
+
+        ConcurrentDictionary<TimestamptCacheKey, TValue> Cache { get; set; } 
+            = new ConcurrentDictionary<TimestamptCacheKey, TValue>();
+
+        public void SetCache(Dictionary<TimestamptCacheKey, TValue> cache)
+        {
+            Cache = new ConcurrentDictionary<TimestamptCacheKey, TValue>(cache);
+        }
+
+        public TimestamptCacheKey[] Keys => Cache.Keys.ToArray();
+
+        public void RemoveAll(IEnumerable<TimestamptCacheKey> keys)
+        {
+            Cache.RemoveAll(keys);
+        }
+
+        public KeyValuePair<TimestamptCacheKey, TValue>[] ToArray() => Cache.ToArray();
+        
 
         public TimestamptCache(IDateService dateService)
         {
@@ -31,15 +68,13 @@ namespace OnlineCamera.Service
                 ServiceTimestamp = now,
                 SourceTimestamp = sourceTimestamp };
 
-            cache.AddOrUpdate(key, k => value, (k, oldV) => {
-                keyT.ServiceTimestamp = now;
-                keyT.SourceTimestamp = sourceTimestamp;
+            Cache.AddOrUpdate(keyT, k => value, (k, oldV) => {
+                k.ServiceTimestamp = now;
+                k.SourceTimestamp = sourceTimestamp;
                 return value;
             });
         }
 
-        public TValue Get(TKey key) => cache.GetValue(key);
-
-
+        public TValue Get(TKey key) => Cache.GetValue(new TimestamptCacheKey { Key = key });
     }
 }

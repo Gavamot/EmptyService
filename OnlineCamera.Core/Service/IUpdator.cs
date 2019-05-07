@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace OnlineCamera.Service
+namespace OnlineCamera.Core
 {
     public interface IUpdator
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OnlineCamera.Value
+namespace OnlineCamera.Core
 {
     public class CameraResponce
     {

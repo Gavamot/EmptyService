@@ -1,6 +1,7 @@
-﻿using System;
+﻿using OnlineCamera.Core;
+using System;
 
-namespace OnlineCamera.Service
+namespace OnlineCamera.Core
 {
     public class DateService : IDateService
     {

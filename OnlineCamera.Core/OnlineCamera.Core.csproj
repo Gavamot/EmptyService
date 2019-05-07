@@ -66,7 +66,7 @@
     <Compile Include="Service\IUpdator.cs" />
     <Compile Include="Service\VideoRegUpdator.cs" />
     <Compile Include="Value\Camera.cs" />
-    <Compile Include="Value\CameraInfo.cs" />
+    <Compile Include="Views\CameraInfo.cs" />
     <Compile Include="Value\CameraResponce.cs" />
     <Compile Include="Value\Snapshot.cs" />
     <Compile Include="Value\VideoRegInfo.cs" />

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Concurrent;
-using OnlineCamera.Value;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace OnlineCamera.Service
+namespace OnlineCamera.Core
 {
     
 

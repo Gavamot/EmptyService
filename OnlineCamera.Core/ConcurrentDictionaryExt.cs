@@ -3,6 +3,16 @@ using System.Collections.Generic;
 
 namespace OnlineCamera.Core
 {
+    public static class CollectionExt
+    {
+        public static T[] ToArray<T>(this ICollection<T> self)
+        {
+            T[] res = new T[self.Count];
+            self.CopyTo(res, 0);
+            return res;
+        }
+    }
+
     public static class ConcurrentDictionaryExt
     {
         /// <summary>
@@ -31,6 +41,15 @@ namespace OnlineCamera.Core
                 self.TryRemove(key, out var v);
             }
         }
+
+        public static void RemoveAll<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> self, IEnumerable<TKey> keys)
+        {
+            foreach(var key in keys)
+            {
+                self.Remove(key);
+            }
+        }
+
         public static TValue GetValueIfNotExistDefault<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> self, TKey key)
         { 
             while (self.ContainsKey(key))

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OnlineCamera.Rep
+namespace OnlineCamera.Core
 {
     public interface IIpRep
     {

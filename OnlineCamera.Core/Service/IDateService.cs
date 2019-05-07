@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OnlineCamera.Service
+namespace OnlineCamera.Core
 {
     public interface IDateService
     {

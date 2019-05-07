@@ -1,14 +1,11 @@
 ﻿using OnlineCamera.Core;
 using OnlineCamera.Core.Config.VideoRegUpdatorConfig;
-using OnlineCamera.Core.Service;
-using OnlineCamera.Core.Value;
-using OnlineCamera.Value;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OnlineCamera.Service
+namespace OnlineCamera.Core
 {
     public class CameraNotFoundException : Exception
     {

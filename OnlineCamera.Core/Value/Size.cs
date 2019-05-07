@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineCamera.Core.Value
+namespace OnlineCamera.Core
 {
     public class Size
     {

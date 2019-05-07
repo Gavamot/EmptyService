@@ -1,14 +1,10 @@
-﻿using OnlineCamera.Core;
-using OnlineCamera.Core.Service;
-using OnlineCamera.Core.Value;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MoreLinq.Extensions;
 using System.Collections.Concurrent;
-using OnlineCamera.Value;
 using OnlineCamera.Core.Config.VideoRegUpdatorConfig;
 
-namespace OnlineCamera.Service
+namespace OnlineCamera.Core
 {
     class VideoRegUpdator : AbstractUpdator
     {
