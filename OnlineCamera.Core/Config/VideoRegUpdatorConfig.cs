@@ -11,7 +11,7 @@ namespace OnlineCamera.Core.Config.VideoRegUpdatorConfig
         /// <summary>
         /// Частота запросов на наличие камер
         /// </summary>
-        public readonly int GetCamerasReqvestIntervalMs;
+        public readonly int GetVideoRegInfoIntervalMs;
         /// <summary>
         /// Желаемый fps скорее всего будет меньше чем хочется
         /// </summary>

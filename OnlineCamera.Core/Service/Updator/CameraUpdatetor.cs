@@ -3,31 +3,9 @@ using OnlineCamera.Core.Config.VideoRegUpdatorConfig;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace OnlineCamera.Core
 {
-    public class CameraNotFoundException : Exception
-    {
-        public CameraNotFoundException(string ip, int cameraNumber)
-            : base($"VideoReg[{ip}] camera[{cameraNumber}] have no the image.")
-        {
-
-        }
-    }
-
-    public interface IGetCameraImg
-    {
-        Task<byte[]> GetImg(Size size, int delayMs, CancellationTokenSource source);
-    }
-
-    public interface IGetVideoRegCameras
-    {
-        Task<int[]> GetCameras(CancellationTokenSource source);
-    }
-
-    public interface VideoRegApi : IGetCameraImg, IGetVideoRegCameras { }
-
     public class CameraUpdatetor : AbstractUpdator
     {
         readonly Camera camera;
@@ -35,21 +13,23 @@ namespace OnlineCamera.Core
 
         IGetCameraImg getCameraImg;
         VideoRegUpdatorConfig config;
+        ICameraCache cameraCache;
 
-        public CameraUpdatetor(ILogger log, IGetCameraImg getCameraImg, VideoRegUpdatorConfig config) : base(log)
+        public CameraUpdatetor(ILogger log, 
+            IGetCameraImg getCameraImg, 
+            VideoRegUpdatorConfig config,
+            ICameraCache cameraCache) : base(log)
         {
             this.getCameraImg = getCameraImg;
             this.config = config;
+            this.cameraCache = cameraCache;
         }
-
-        Task task { get; set; }
 
         public override string Name => $"CameraUpdatetor {camera} {size}";
 
         CancellationTokenSource source;
         public delegate void CompleteUpdate(Camera camera);
         public event CompleteUpdate CompleteUpdateEvent;
-
         protected override async void UpdateAsync()
         {
             int trys = 0;
@@ -57,8 +37,8 @@ namespace OnlineCamera.Core
             {
                 try
                 {
-                    var img = await getCameraImg.GetImg(size, config.DelayMs, source);
-
+                    var cameraResponce = await getCameraImg.GetImgAsync(size, config.DelayMs, source);
+                    this.cameraCache.SetCamera(camera, cameraResponce);
                 }
                 catch (CameraNotFoundException e)
                 {

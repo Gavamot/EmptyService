@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MoreLinq.Extensions;
 using System.Collections.Concurrent;
 using OnlineCamera.Core.Config.VideoRegUpdatorConfig;
+using System;
 
 namespace OnlineCamera.Core
 {
@@ -10,13 +11,15 @@ namespace OnlineCamera.Core
     {
         // 1 Запрашивает камеры первый раз в n секунд и ставит их на обновление 
         // 2 Второй поток пытается брать изображения с камер n раз. Если у него не получается он умирает
-        public VideoRegUpdator(ILogger log, VideoRegApi api, VideoRegUpdatorConfig config) : base(log)
+        public VideoRegUpdator(ILogger log, IVideoRegApi api, ICache cache, VideoRegUpdatorConfig config) : base(log)
         {
             this.api = api;
             this.config = config;
+            this.cache = cache;
         }
 
-        readonly VideoRegApi api;
+        readonly ICache cache;
+        readonly IVideoRegApi api;
         readonly VideoRegUpdatorConfig config;
        
         public string Ip { get; private set; }
@@ -32,7 +35,7 @@ namespace OnlineCamera.Core
         {
             if (CameraUpdatoros.ContainsKey(camNum))
                 return false;
-            var camUpdator = new CameraUpdatetor(log, api, config);
+            var camUpdator = new CameraUpdatetor(log, api, config, cache);
             camUpdator.CompleteUpdateEvent += (cam) => CameraUpdatoros.Remove(cam.Number);
             bool res = CameraUpdatoros.AddIfNotExist(camNum, camUpdator);
             camUpdator.Start(source);
@@ -43,15 +46,41 @@ namespace OnlineCamera.Core
         {
             while (source.IsCancellationRequested)
             {
-                var cameras = await api.GetCameras(source);
-                cameras.ForEach(camNum => AddNewCameraUpdator(camNum));
                 try
                 {
-                    await Task.Delay(config.GetCamerasReqvestIntervalMs, source.Token);
+                    var regResponce = await api.GetVideoRegInfoAsync(source);
+                    cache.SetVideoRegInfo(Ip, new VideoRegInfo
+                    {
+                        Ip = Ip,
+                        BrigadeCode = regResponce.BrigadeCode,
+                        IveSerial = regResponce.IveSerial,
+                        Version = regResponce.Version,
+                        VideoRegSerial = regResponce.VideoRegSerial
+                    }, regResponce.CurrentDate);
+                    regResponce.Cameras.ForEach(camNum => AddNewCameraUpdator(camNum));
                 }
-                catch (TaskCanceledException e)
+                catch (TimeoutException e)
                 {
-                    break;
+                    // Время ожидания превышенно надо попробовать снова
+                    log.Info($"api.GetVideoRegInfo() timeout exception. VideoReg({Ip}) is not available in this moment or ");
+                }
+                catch (OperationCanceledException e)
+                {
+                    return;
+                }
+                catch (Exception e)
+                {
+                    // Неизвестная ошибка надо попробывать снова
+                    log.Info(e.Message);
+                }
+
+                try
+                {
+                    await Task.Delay(config.GetVideoRegInfoIntervalMs, source.Token);
+                }
+                catch(OperationCanceledException e)
+                {
+                    return;
                 }
             }
         }

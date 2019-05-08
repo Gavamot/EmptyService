@@ -14,7 +14,7 @@ namespace OnlineCamera.Core
 
     public interface ICameraCache
     {
-        void SetCamera(Camera camera, Snapshot snapshot);
+        void SetCamera(Camera camera, CameraResponce snapshot);
     }
 
     public interface IVideoRegsCache
@@ -22,7 +22,9 @@ namespace OnlineCamera.Core
         VideoReg[] VideoRegs { get; }
     }
 
-    public class CacheManager : IVideoRegInfoCache, ICameraCache, IVideoRegsCache
+    public interface ICache : IVideoRegInfoCache, ICameraCache, IVideoRegsCache { };
+
+    public class CacheManager : ICache
     {
         readonly IDateService dateService;
         readonly CacheConfig config;
@@ -34,8 +36,8 @@ namespace OnlineCamera.Core
             this.config = config;
         }
 
-        public readonly TimestamptCache<string, VideoRegInfo> VideoRegInfo;
-        public readonly TimestamptCache<Camera, Snapshot> Cameras;
+        readonly TimestamptCache<string, VideoRegInfo> VideoRegInfo;
+        readonly TimestamptCache<Camera, Snapshot> Cameras;
 
         volatile VideoReg[] videoRegs = new VideoReg[0];
         public VideoReg[] VideoRegs => videoRegs;
@@ -89,8 +91,13 @@ namespace OnlineCamera.Core
         public void SetVideoRegInfo(string ip, VideoRegInfo info, DateTime sourceTimestamp) =>
             VideoRegInfo.Set(ip, info, sourceTimestamp);
 
-
-        public void SetCamera(Camera camera, Snapshot snapshot)
-            => Cameras.Set(camera, snapshot, snapshot.SourceTimestamp);
+        public void SetCamera(Camera camera, CameraResponce responce)
+            => Cameras.Set(camera, 
+                new Snapshot {
+                    Camera = camera,
+                    Img = responce.Img,
+                    SourceTimestamp = responce.SourceTimestamp },
+                    responce.SourceTimestamp
+                );
     }
 }
