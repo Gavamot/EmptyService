@@ -35,8 +35,14 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.XmlTransform, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
+    </Reference>
     <Reference Include="MoreLinq, Version=3.1.1.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.3.1.1\lib\net451\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -63,6 +69,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rep\IIpRep.cs" />
     <Compile Include="Rep\IpFileRep.cs" />
+    <Compile Include="Service\ApiDataTransformer.cs" />
+    <Compile Include="Service\Http1Api.cs" />
+    <Compile Include="Service\IOnlineCameraService.cs" />
     <Compile Include="Service\OnlineCameraService.cs" />
     <Compile Include="Service\Statistic\StatistRegistratorToDb.cs" />
     <Compile Include="Service\Updator\AbstractUpdator.cs" />
@@ -75,6 +84,7 @@
     <Compile Include="Service\Statistic\IStatistRegistrator.cs" />
     <Compile Include="Service\Updator\IVideoRegApi.cs" />
     <Compile Include="Service\Updator\VideoRegUpdator.cs" />
+    <Compile Include="Service\WebReqvestBuilder.cs" />
     <Compile Include="Value\Api\VideoRegResponce.cs" />
     <Compile Include="Value\Camera.cs" />
     <Compile Include="Value\CameraInfo.cs" />

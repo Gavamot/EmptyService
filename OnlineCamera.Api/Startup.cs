@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using OnlineCamera.Core;
+using OnlineCamera.Core.Service;
+using OnlineCamera.Core.Service.Statistic;
 
 namespace OnlineCamera.Api
 {
@@ -36,6 +36,14 @@ namespace OnlineCamera.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var cacheManager = new CacheManager(new DateService(), Config);
+            var statService = new StatistRegistratorToDb();
+            var cameraService = new OnlineCameraService(new Http1Api(), cacheManager, statService, Config);
+
+            services.AddSingleton<ICache>(cacheManager);
+            services.AddSingleton<IStatistRegistrator>(statService);
+            services.AddSingleton<IOnlineCameraService>(cameraService);
+
             services.AddApiVersioning(o =>
             {
                 o.ReportApiVersions = true;

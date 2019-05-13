@@ -7,7 +7,7 @@ using OnlineCamera.Core.Value.Api;
 
 namespace OnlineCamera.Core.Service.Statistic
 {
-    class StatistRegistratorToDb : IStatistRegistrator
+    public class StatistRegistratorToDb : IStatistRegistrator
     {
         public Task RegAsync(string ip, VideoRegResponce responce)
         {

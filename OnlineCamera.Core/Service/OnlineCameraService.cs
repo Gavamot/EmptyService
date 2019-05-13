@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OnlineCamera.Core
 {
-    public class OnlineCameraService
+    public class OnlineCameraService : IOnlineCameraService
     {
         readonly Dictionary<string, VideoRegUpdator> videoRegUpdators = new Dictionary<string, VideoRegUpdator>();
         readonly IVideoRegApi api;
