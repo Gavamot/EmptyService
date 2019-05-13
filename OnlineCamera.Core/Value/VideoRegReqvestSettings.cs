@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnlineCamera.Core
 {
-    public interface ILogger
+    public class VideoRegReqvestSettings
     {
-        void Info(string message);
-        void Error(string message, Exception exeption);
-        void Warm(string mesasge);
+        public string Ip { get; set; }
+        public Size Size { get; set; } 
     }
 }

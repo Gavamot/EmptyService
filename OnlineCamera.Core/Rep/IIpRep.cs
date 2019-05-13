@@ -7,7 +7,7 @@ namespace OnlineCamera.Core
 {
     public interface IIpRep
     {
-        string[] GetAll();
+        VideoRegReqvestSettings[] GetAll();
     }
     
 }

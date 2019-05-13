@@ -3,7 +3,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using MoreLinq;
-using OnlineCamera.Core.Config;
 
 namespace OnlineCamera.Core
 {
@@ -27,8 +26,8 @@ namespace OnlineCamera.Core
     public class CacheManager : ICache
     {
         readonly IDateService dateService;
-        readonly CacheConfig config;
-        public CacheManager(IDateService dateService, CacheConfig config)
+        readonly Config config;
+        public CacheManager(IDateService dateService, Config config)
         {
             this.dateService = dateService;
             this.VideoRegInfo = new TimestamptCache<string, VideoRegInfo>(dateService);

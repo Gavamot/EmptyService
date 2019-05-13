@@ -8,25 +8,44 @@ using System.Threading.Tasks;
 
 namespace OnlineCamera.Core
 {
-    public abstract class AbstractUpdator : IUpdator, IDisposable
+    public interface IUpdator<T>
+    {
+        void Start(T parameters, CancellationTokenSource source);
+        void Stop();
+    }
+
+    /// <summary>
+    /// Задача постоянного обновления
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class AbstractUpdator<T> : IUpdator<T>, IDisposable
     {
         public abstract string Name { get; }
-        protected ILogger log { get; set; }
         protected Task task { get; set; }
-        protected abstract void UpdateAsync();
-        public AbstractUpdator(ILogger log)
-        {
-            this.log = log;
-        }
+        protected abstract void UpdateAsync(T parameters);
 
+        protected CancellationToken token => source.Token;
         protected CancellationTokenSource source;
-        public virtual void Start(CancellationTokenSource source)
+
+        public virtual void Start(T parameters, CancellationTokenSource source)
         {
             this.source = source;
-            this.task = new Task(UpdateAsync, source.Token)
-                .ContinueWith((t) => log.Info($"{Name} execution is completed"));
-            log.Info($"{ Name } service is starting ...");
+            this.task = new Task(()=> { UpdateAsync(parameters); }, source.Token);
             task.Start();
+        }
+
+
+        protected async Task<bool> SleepTrueIfCanceled(int ms)
+        {
+            try
+            {
+                await Task.Delay(ms, token);
+                return false;
+            }
+            catch (OperationCanceledException e)
+            {
+                return true;
+            }
         }
 
         public virtual void Stop()
@@ -37,7 +56,7 @@ namespace OnlineCamera.Core
             }
             catch(AggregateException e)
             {
-                log.Error(e.Message, e);
+
             }
         }
 
@@ -46,6 +65,6 @@ namespace OnlineCamera.Core
             Stop();
         }
 
-        public override string ToString() => Name; 
+        public override string ToString() => Name;
     }
 }

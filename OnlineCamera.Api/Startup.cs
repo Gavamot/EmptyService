@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OnlineCamera.Core;
 
 namespace OnlineCamera.Api
 {
@@ -19,9 +20,18 @@ namespace OnlineCamera.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            ReadConfig();
         }
 
         public IConfiguration Configuration { get; }
+        public Config Config { get; set; }
+
+
+        private void ReadConfig()
+        {
+            Config = new Config();
+            Configuration.GetSection("Settings").Bind(Config);
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -33,8 +43,6 @@ namespace OnlineCamera.Api
                 o.DefaultApiVersion = new ApiVersion(1, 0);
                 o.ApiVersionReader = new UrlSegmentApiVersionReader();
             });
-
-     ;
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineCamera.Core.Value;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,40 +8,55 @@ using System.Threading.Tasks;
 
 namespace OnlineCamera.Core
 {
-    public interface IFileReader
+    public interface IVideoRegReqvestSettingsReader
     {
-        string[] ReadAllStringsFromFile(string fileName);
+        VideoRegReqvestSettings[] ReadAll();
     }
 
-    class FileReader : IFileReader
-    {
-        public string[] ReadAllStringsFromFile(string fileName)
-        {
-            return File.ReadAllLines(fileName);
-        }
-    }
-
-    public class IpFileRep : IIpRep
+    class FileReader : IVideoRegReqvestSettingsReader
     {
         readonly string fileName;
-        readonly IFileReader fileReader;
-        public IpFileRep(string fileName)
+        public FileReader(string fileName)
         {
             this.fileName = fileName;
         }
 
-        public IpFileRep(string fileName, IFileReader fileReader) : this(fileName)
+       
+        public VideoRegReqvestSettings[] ReadAll()
         {
-            this.fileReader = fileReader;
+            var regex = new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b:\d{1:5} \d{3:4}x\d{3:4}");
+            var res = File.ReadAllLines(fileName)
+                .Select(x => regex.Match(x).Value)
+                .Select(x => {
+                    var v = x.Split(' ');
+                    var sizeStr = v[1].Split('x');
+                    return new VideoRegReqvestSettings
+                    {
+                        Ip = v[0],
+                        Size = new Size
+                        {
+                            Width = int.Parse(sizeStr[0]),
+                            Height = int.Parse(sizeStr[1])
+                        }
+                    };
+                })
+                .ToArray();
+            return res;
+        }
+    }
+    
+    public class IpRep : IIpRep
+    {
+        private readonly VideoRegReqvestSettings[] data;
 
+        public IpRep(IVideoRegReqvestSettingsReader ipReader)
+        {
+            this.data = ipReader.ReadAll();
         }
 
-        public string[] GetAll()
+        public VideoRegReqvestSettings[] GetAll()
         {
-            var regex = new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
-            return File.ReadAllLines(fileName)
-                .Select(x => regex.Match(x).Value)
-                .ToArray();
+            return data;
         }
     }
 }

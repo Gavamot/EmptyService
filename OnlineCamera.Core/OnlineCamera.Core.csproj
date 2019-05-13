@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,7 +39,11 @@
       <HintPath>..\packages\morelinq.3.1.1\lib\net451\MoreLinq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.110.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -50,20 +56,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcurrentDictionaryExt.cs" />
-    <Compile Include="Config\CacheConfig.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Db\Entety\RegStatus.cs" />
+    <Compile Include="Db\SqlLiteDbCreator.cs" />
     <Compile Include="Entety\CameraStatus.cs" />
-    <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rep\IIpRep.cs" />
     <Compile Include="Rep\IpFileRep.cs" />
+    <Compile Include="Service\OnlineCameraService.cs" />
+    <Compile Include="Service\Statistic\StatistRegistratorToDb.cs" />
     <Compile Include="Service\Updator\AbstractUpdator.cs" />
     <Compile Include="Service\Cache\TimestamptCache.cs" />
-    <Compile Include="Service\Cache\Cache.cs" />
+    <Compile Include="Service\Cache\CacheManager.cs" />
     <Compile Include="Service\Updator\CameraNotFoundException.cs" />
     <Compile Include="Service\Updator\CameraUpdatetor.cs" />
     <Compile Include="Service\DateService.cs" />
     <Compile Include="Service\IDateService.cs" />
-    <Compile Include="Service\Updator\IUpdator.cs" />
+    <Compile Include="Service\Statistic\IStatistRegistrator.cs" />
     <Compile Include="Service\Updator\IVideoRegApi.cs" />
     <Compile Include="Service\Updator\VideoRegUpdator.cs" />
     <Compile Include="Value\Api\VideoRegResponce.cs" />
@@ -74,11 +83,18 @@
     <Compile Include="Value\VideoRegInfo.cs" />
     <Compile Include="Value\Size.cs" />
     <Compile Include="Value\VideoReg.cs" />
-    <Compile Include="Config\VideoRegUpdatorConfig.cs" />
+    <Compile Include="Value\VideoRegReqvestSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.110.0\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
 </Project>

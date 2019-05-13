@@ -1,5 +1,4 @@
 ﻿using OnlineCamera.Core;
-using OnlineCamera.Core.Config;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -54,7 +53,6 @@ namespace OnlineCamera.Core
 
         public KeyValuePair<TimestamptCacheKey, TValue>[] ToArray() => Cache.ToArray();
         
-
         public TimestamptCache(IDateService dateService)
         {
             this.dateService = dateService;
