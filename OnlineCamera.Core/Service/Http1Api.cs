@@ -26,9 +26,9 @@ namespace OnlineCamera.Core.Service
 
         ApiDataTransformer transformer = new ApiDataTransformer();
 
-        public async Task<CameraResponce> GetImgAsync(Size size, int timeoutMs, CancellationTokenSource source)
+        public async Task<CameraResponce> GetImgAsync(string ip, Size size, int timeoutMs, CancellationTokenSource source)
         {
-           var responce = await RetriveByteArrayFromUrlAsync(GET_ONLINE_CAMERA_IMG, HttpMethod.Get);
+           var responce = await RetriveByteArrayFromUrlAsync(ip + GET_ONLINE_CAMERA_IMG, HttpMethod.Get);
            var dateTime = transformer.ToDate(responce.Headers["x-img-date"]);
             return new CameraResponce
             {
@@ -37,9 +37,9 @@ namespace OnlineCamera.Core.Service
             };
         }
 
-        public async Task<VideoRegResponce> GetVideoRegInfoAsync(int timeoutMs, CancellationTokenSource source)
+        public async Task<VideoRegResponce> GetVideoRegInfoAsync(string ip, int timeoutMs, CancellationTokenSource source)
         {
-            return await RetriveDataFromUrlAsync<VideoRegResponce>(GET_VIDEO_REG_INFO, HttpMethod.Get);
+            return await RetriveDataFromUrlAsync<VideoRegResponce>(ip + GET_VIDEO_REG_INFO, HttpMethod.Get);
         }
 
         Dictionary<string, string> GetHeaders(WebHeaderCollection collection) 

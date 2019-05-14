@@ -6,12 +6,12 @@ namespace OnlineCamera.Core
 {
     public interface IGetCameraImg
     {
-        Task<CameraResponce> GetImgAsync(Size size, int timeoutMs, CancellationTokenSource source);
+        Task<CameraResponce> GetImgAsync(string ip, Size size, int timeoutMs, CancellationTokenSource source);
     }
 
     public interface IGetVideoRegInfo
     {
-        Task<VideoRegResponce> GetVideoRegInfoAsync(int timeoutMs, CancellationTokenSource source);
+        Task<VideoRegResponce> GetVideoRegInfoAsync(string ip, int timeoutMs, CancellationTokenSource source);
     }
 
     public interface IVideoRegApi : IGetCameraImg, IGetVideoRegInfo { }

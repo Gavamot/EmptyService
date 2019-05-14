@@ -1,6 +1,4 @@
-﻿using OnlineCamera.Core;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -21,7 +19,8 @@ namespace OnlineCamera.Core
         public CameraUpdatetor(
             IGetCameraImg getCameraImg, 
             ICameraCache cameraCache,
-            Config config)
+            Config config,
+            IAppLogger log) : base(log)
         {
             this.getCameraImg = getCameraImg;
             this.config = config;
@@ -31,8 +30,13 @@ namespace OnlineCamera.Core
         public override string Name => $"CameraUpdatetor {camera}";
 
         CancellationTokenSource source;
-        public delegate void CompleteUpdate(Camera camera);
-        public event CompleteUpdate CompleteUpdateEvent;
+
+        public event Action<CameraUpdatetor, Camera> OnCompleteUpdate;
+
+        // 1 Запрос к регистратору на камеры;
+        // 2 Создаем потоки для камер и начинаем закачку 
+        // 3 Если не получилось взять видео в течении CountOfTrys задача умирает.
+        // 4 Если не вышло получить изображение спим 1 секунду и пробуем снова
 
         protected int CalculateTimeForSleep(int timeMs, int fps)
         {
@@ -41,8 +45,8 @@ namespace OnlineCamera.Core
                 return 0;
             return res;
         }
-
-        protected override async void UpdateAsync(Size parameters)
+   
+        protected override async Task UpdateAsync(Size parameters)
         {
             int trys = 0;
             while (trys < config.CountOfTrys)
@@ -51,12 +55,13 @@ namespace OnlineCamera.Core
                 {
                     var timer = new Stopwatch();
                     timer.Start();
-
-                    var cameraResponce = await getCameraImg.GetImgAsync(parameters, config.TimeoutMs, source);
+                    var cameraResponce = await getCameraImg.GetImgAsync(camera.VideoRegIp, parameters, config.TimeoutMs, source);
                     this.cameraCache.SetCamera(camera, cameraResponce);
-
                     timer.Stop();
+
                     var sleepMs = CalculateTimeForSleep((int)timer.ElapsedMilliseconds, config.MaxFps);
+                    log.Debug($"{Name} {parameters} - got {cameraResponce}  time execution = {timer.ElapsedMilliseconds} ms | time for sleep = {sleepMs} ms");
+
                     if (await SleepTrueIfCanceled(1000))
                     {
                         return;
@@ -64,17 +69,16 @@ namespace OnlineCamera.Core
                 }
                 catch (CameraNotFoundException e)
                 {
+                    log.Warning($"{Name} camera {camera} have no connect is lost");
                     return;
                 }
                 catch(TimeoutException e)
                 {
+                    log.Error($"{Name} TimeoutException ({e.Message})");
                     if (await SleepTrueIfCanceled(1000))
                     {
                         return;
                     }
-                        
-                    // Время ожидания превышенно надо попробовать снова
-                    //log.Info($"getCameraImg.GetImg() timeout exception. VideoReg({camera.VideoRegIp}) is not available in this moment or ");
                 }
                 catch (OperationCanceledException e)
                 {
@@ -82,23 +86,20 @@ namespace OnlineCamera.Core
                 }
                 catch (Exception e)
                 {
-                    if (await SleepTrueIfCanceled(1000))
+                    log.Error($"{Name} update error ({e.Message})", e);
+                    if (await SleepTrueIfCanceled(500))
                     {
                         return;
                     }
                     // Неизвестная ошибка надо попробывать снова
-                }
-                finally
-                {
                     trys++;
                 }
             }
         }
 
-
-        // 1 Запрос к регистратору на камеры;
-        // 2 Создаем потоки для камер и начинаем закачку 
-        // 3 Если не получилось взять видео в течении CountOfTrys задача умирает.
-        // 4 Если не вышло получить изображение спим 1 секунду и пробуем снова
+        protected override void OnComplete()
+        {
+            OnCompleteUpdate(this, camera);
+        }
     }
 }

@@ -16,13 +16,14 @@ namespace OnlineCamera.Core
         readonly Config config;
         readonly IStatistRegistrator statistRegistrator;
         private readonly object objLock = new object();
-
-        public OnlineCameraService(IVideoRegApi api, ICache cache, IStatistRegistrator statistRegistrator, Config config)
+        readonly IAppLogger log;
+        public OnlineCameraService(IVideoRegApi api, ICache cache, IStatistRegistrator statistRegistrator, Config config, IAppLogger log)
         {
             this.api = api;
             this.cache = cache;
             this.config = config;
             this.statistRegistrator = statistRegistrator;
+            this.log = log;
         }
 
         public void AddVideoReg(VideoRegReqvestSettings settings)
@@ -31,7 +32,7 @@ namespace OnlineCamera.Core
             {
                 if (videoRegUpdators.ContainsKey(settings.Ip))
                     return;
-                var videoRegUpdator = new VideoRegUpdator(api, cache, statistRegistrator, config);
+                var videoRegUpdator = new VideoRegUpdator(api, cache, statistRegistrator, config, log);
                 videoRegUpdators.Add(settings.Ip, videoRegUpdator);
                 videoRegUpdator.Start(settings, new CancellationTokenSource());
             }

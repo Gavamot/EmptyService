@@ -13,35 +13,52 @@ namespace OnlineCamera.Core
         VideoRegReqvestSettings[] ReadAll();
     }
 
-    class FileReader : IVideoRegReqvestSettingsReader
+    public class IpFileRep : IVideoRegReqvestSettingsReader
     {
         readonly string fileName;
-        public FileReader(string fileName)
+        public IpFileRep(string fileName)
         {
             this.fileName = fileName;
         }
 
-       
+        /// <exception cref="FileNotFoundException">unable to read file</exception>
+        /// <exception cref="FormatException">file content has bad format</exception>
         public VideoRegReqvestSettings[] ReadAll()
         {
-            var regex = new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b:\d{1:5} \d{3:4}x\d{3:4}");
-            var res = File.ReadAllLines(fileName)
-                .Select(x => regex.Match(x).Value)
-                .Select(x => {
-                    var v = x.Split(' ');
-                    var sizeStr = v[1].Split('x');
-                    return new VideoRegReqvestSettings
-                    {
-                        Ip = v[0],
-                        Size = new Size
+            string[] allRows;
+            try
+            {
+                allRows = File.ReadAllLines(fileName);
+            }
+            catch (Exception e)
+            {
+                throw new FileNotFoundException($"File {fileName} not exist or permission denied");
+            }
+
+            try
+            {
+                var regex = new Regex(@"^https?://(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+ ([0-9]+)x([0-9]+)$");
+                return allRows
+                    .Select(x => regex.Match(x).Value)
+                    .Select(x => {
+                        var v = x.Split(' ');
+                        var sizeStr = v[1].Split('x');
+                        return new VideoRegReqvestSettings
                         {
-                            Width = int.Parse(sizeStr[0]),
-                            Height = int.Parse(sizeStr[1])
-                        }
-                    };
-                })
-                .ToArray();
-            return res;
+                            Ip = v[0],
+                            Size = new Size
+                            {
+                                Width = int.Parse(sizeStr[0]),
+                                Height = int.Parse(sizeStr[1])
+                            }
+                        };
+                    })
+                    .ToArray();
+            }
+            catch (Exception e)
+            {
+                throw new FormatException($"Each rows in file {fileName} must have format like [122.1.1.1:33 800x600]");
+            }
         }
     }
     

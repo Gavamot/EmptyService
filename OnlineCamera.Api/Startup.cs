@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OnlineCamera.Core;
 using OnlineCamera.Core.Service;
 using OnlineCamera.Core.Service.Statistic;
+using Serilog;
 
 namespace OnlineCamera.Api
 {
@@ -33,13 +34,36 @@ namespace OnlineCamera.Api
             Configuration.GetSection("Settings").Bind(Config);
         }
 
+        
+        private VideoRegReqvestSettings[] GetSettings(string fileName)
+        {
+            var ipRep = new IpFileRep(fileName);
+            var videoRegs = ipRep.ReadAll();
+            if (!videoRegs.Any())
+                throw new Exception($"VideoRegs not found in the file {fileName}");
+           return videoRegs;
+        } 
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var cacheManager = new CacheManager(new DateService(), Config);
             var statService = new StatistRegistratorToDb();
-            var cameraService = new OnlineCameraService(new Http1Api(), cacheManager, statService, Config);
 
+            IAppLogger log = new AppLogger();
+            var cameraService = new OnlineCameraService(new Http1Api(), cacheManager, statService, Config, log);
+            try
+            {
+                var videoRegs = GetSettings(Config.IpFile);
+                cameraService.AddVideoRegs(videoRegs);
+            }
+            catch (Exception e)
+            {
+                log.Fatal(e.Message);
+                Environment.Exit(1);
+            }
+
+            services.AddSingleton<IAppLogger>(log);
             services.AddSingleton<ICache>(cacheManager);
             services.AddSingleton<IStatistRegistrator>(statService);
             services.AddSingleton<IOnlineCameraService>(cameraService);

@@ -66,6 +66,8 @@
     <Compile Include="Db\Entety\RegStatus.cs" />
     <Compile Include="Db\SqlLiteDbCreator.cs" />
     <Compile Include="Entety\CameraStatus.cs" />
+    <Compile Include="IAppLogger.cs" />
+    <Compile Include="JsonConvertExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rep\IIpRep.cs" />
     <Compile Include="Rep\IpFileRep.cs" />
