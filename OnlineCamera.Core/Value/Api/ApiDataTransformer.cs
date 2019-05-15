@@ -15,7 +15,7 @@ namespace OnlineCamera.Core.Service
             return DateTime.ParseExact(dt, DateFormat, CultureInfo.InvariantCulture);
         }
 
-        public string ToSring(DateTime dt)
+        public string ToString(DateTime dt)
         {
             return dt.ToString(DateFormat, CultureInfo.InvariantCulture);
         }

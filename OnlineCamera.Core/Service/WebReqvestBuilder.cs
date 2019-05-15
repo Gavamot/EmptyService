@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineCamera.Core.Value.Api;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -36,9 +37,12 @@ namespace OnlineCamera.Core.Service
         protected readonly HttpMethod[] UrlParameters = new[]{
                 HttpMethod.Get
             };
-        string GenerateParametersString(Dictionary<string, string> parameters)
+        string GenerateParametersString(ParametersCollection parametersCollection)
         {
-            if (parameters == null || !parameters.Any())
+            if (parametersCollection == null)
+                return string.Empty;
+            var parameters = parametersCollection.ToDictionary();
+            if(!parameters.Any())
                 return string.Empty;
 
             var parametersArray = parameters.Select(x => $"{x.Key}={x.Value}").ToArray();
@@ -46,19 +50,23 @@ namespace OnlineCamera.Core.Service
             return res;
         }
 
-        WebRequest GetWithUrlParameters(string url, string method, Dictionary<string, string> parameters)
+        WebRequest GetWithUrlParameters(string url, string method, ParametersCollection parametersCollection)
         {
-            string getParameters = GenerateParametersString(parameters);
+            string getParameters = GenerateParametersString(parametersCollection);
             url += $"?{getParameters}";
-            return WebRequest.Create(url);
+
+            var request = WebRequest.Create(url);
+            request.Method = method;
+            return request;
         }
 
-        protected WebRequest GetWithBodyParameters(string url, string method, Dictionary<string, string> parameters)
+        protected WebRequest GetWithBodyParameters(string url, string method, ParametersCollection parametersCollection)
         {
             var request = WebRequest.Create(url);
             string postParameters = GenerateParametersString(parameters);
             byte[] postData = Encoding.UTF8.GetBytes(WebUtility.UrlEncode(postParameters));
             request.ContentLength = postData.Length;
+            request.Method = method;
             using (var stream = request.GetRequestStream())
             {
                 stream.Write(postData, 0, postData.Length);
@@ -66,7 +74,7 @@ namespace OnlineCamera.Core.Service
             return request;
         }
 
-        Dictionary<string, string> parameters { get; set; }
+        ParametersCollection parameters { get; set; }
         string url { get; set; }
         HttpMethod method { get; set; }
         public WebReqvestBuilder(string url, HttpMethod method)
@@ -75,7 +83,7 @@ namespace OnlineCamera.Core.Service
             this.method = method;
         }
 
-        public WebReqvestBuilder AddParameters(Dictionary<string, string> parameters)
+        public WebReqvestBuilder AddParameters(ParametersCollection parameters)
         {
             this.parameters = parameters;
             return this;

@@ -37,7 +37,6 @@ namespace OnlineCamera.Core
         // 2 Создаем потоки для камер и начинаем закачку 
         // 3 Если не получилось взять видео в течении CountOfTrys задача умирает.
         // 4 Если не вышло получить изображение спим 1 секунду и пробуем снова
-
         protected int CalculateTimeForSleep(int timeMs, int fps)
         {
             int res = (1000/fps) - timeMs;
@@ -49,17 +48,29 @@ namespace OnlineCamera.Core
         protected override async Task UpdateAsync(Size parameters)
         {
             int trys = 0;
+            var timeStampt = DateTime.MinValue; 
             while (trys < config.CountOfTrys)
             {
                 try
                 {
                     var timer = new Stopwatch();
                     timer.Start();
-                    var cameraResponce = await getCameraImg.GetImgAsync(camera.VideoRegIp, parameters, config.TimeoutMs, source);
-                    this.cameraCache.SetCamera(camera, cameraResponce);
+                    var cameraResponce = await getCameraImg.GetImgAsync(camera, parameters, timeStampt, config.TimeoutMs, source);
                     timer.Stop();
 
-                    var sleepMs = CalculateTimeForSleep((int)timer.ElapsedMilliseconds, config.MaxFps);
+                    if (cameraResponce == null) // Дата изображения на сервере не изменилась
+                    {
+                        log.Warning($" {Name} img was repeted ... timespampt={timeStampt.ToShortTimeString() }");
+                        if (await SleepTrueIfCanceled(100))
+                        {
+                            return;
+                        }
+                        continue;
+                    }
+
+                    timeStampt = cameraResponce.SourceTimestamp;
+                    this.cameraCache.SetCamera(camera, cameraResponce);
+                    var sleepMs = CalculateTimeForSleep((int) timer.ElapsedMilliseconds, config.MaxFps);
                     log.Debug($"{Name} {parameters} - got {cameraResponce}  time execution = {timer.ElapsedMilliseconds} ms | time for sleep = {sleepMs} ms");
 
                     if (await SleepTrueIfCanceled(1000))

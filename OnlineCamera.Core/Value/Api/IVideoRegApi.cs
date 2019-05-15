@@ -1,4 +1,5 @@
 ﻿using OnlineCamera.Core.Value.Api;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -6,7 +7,7 @@ namespace OnlineCamera.Core
 {
     public interface IGetCameraImg
     {
-        Task<CameraResponce> GetImgAsync(string ip, Size size, int timeoutMs, CancellationTokenSource source);
+        Task<CameraResponce> GetImgAsync(Camera camera, Size size, DateTime lastSnapshot, int timeoutMs, CancellationTokenSource source);
     }
 
     public interface IGetVideoRegInfo
