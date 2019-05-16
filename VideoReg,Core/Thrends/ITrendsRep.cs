@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VideoReg.Core
+namespace VideoReg.Core.Thrends
 {
-    public interface ICamerasRep
+    public interface ITrendsRep
     {
-        Task<CameraSettings[]> GetCameraSettingsAsync();
+        Task<byte[]> GetThrends();
     }
 }

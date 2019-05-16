@@ -35,14 +35,15 @@ namespace OnlineCamera.Core
         public override string Name => ToString();
         public override string ToString() => $"VideoRegUpdator({Ip})";
 
-        bool AddNewCameraUpdator(int camNum, Size size)
+        bool AddNewCameraUpdator(Camera camera)
         {
-            if (CameraUpdatoros.ContainsKey(camNum))
+            if (CameraUpdatoros.ContainsKey(camera.Number))
                 return false;
+            
             var camUpdator = new CameraUpdatetor(api, cache, config, log);
             camUpdator.OnCompleteUpdate += (updator ,cam) => CameraUpdatoros.Remove(cam.Number);
-            bool res = CameraUpdatoros.AddIfNotExist(camNum, camUpdator);
-            camUpdator.Start(size, source);
+            bool res = CameraUpdatoros.AddIfNotExist(camera.Number, camUpdator);
+            camUpdator.Start(camera, source);
             return res;
         }
 
@@ -62,11 +63,17 @@ namespace OnlineCamera.Core
                         Version = regResponce.Version,
                         VideoRegSerial = regResponce.VideoRegSerial
                     }, regResponce.CurrentDate);
-                    regResponce.Cameras.ForEach(camNum => AddNewCameraUpdator(camNum, parameters.Size));
+
+                    regResponce.Cameras.ForEach(
+                        camNum => AddNewCameraUpdator(
+                            Camera.CreateCamera(Ip, camNum, parameters.Size)
+                        )
+                    );
 
                     log.Debug($"{Name} got info [{regResponce}]");
 
-                    statisticRegistrator.RegAsync(Ip, regResponce).Start();
+                    // Запускаем процедуру задачу сбора статистики
+                    // statisticRegistrator.RegAsync(Ip, regResponce).Start();
 
                     if (await SleepTrueIfCanceled(config.VideoRegPollingIntervalSeconds))
                     {

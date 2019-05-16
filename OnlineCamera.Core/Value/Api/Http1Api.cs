@@ -28,12 +28,12 @@ namespace OnlineCamera.Core.Service
 
         ApiDataTransformer transformer = new ApiDataTransformer();
 
-        public async Task<CameraResponce> GetImgAsync(Camera camera, Size size, DateTime lastSnapshot, int timeoutMs, CancellationTokenSource source)
+        public async Task<CameraResponce> GetImgAsync(Camera camera, DateTime lastSnapshot, int timeoutMs, CancellationTokenSource source)
         {
             var parametersCollection = new ParametersCollection();
             parametersCollection.Add("number", camera.Number);
             parametersCollection.Add("timestamp", lastSnapshot);
-            parametersCollection.Add("size", size);
+            parametersCollection.Add("size", camera.Size);
 
             var responce = await RetriveByteArrayFromUrlAsync(camera.VideoRegIp + GET_ONLINE_CAMERA_IMG, HttpMethod.Get, parametersCollection);
 
@@ -57,6 +57,7 @@ namespace OnlineCamera.Core.Service
             }
         }
 
+
         public async Task<VideoRegResponce> GetVideoRegInfoAsync(string ip, int timeoutMs, CancellationTokenSource source)
         {
             return await RetriveDataFromUrlAsync<VideoRegResponce>(ip + GET_VIDEO_REG_INFO, HttpMethod.Get);
@@ -74,7 +75,6 @@ namespace OnlineCamera.Core.Service
 
         async Task<Responce> RetriveByteArrayFromUrlAsync(string url, HttpMethod method, ParametersCollection parametersCollection = null)
         {
-    
             var request = new WebReqvestBuilder(url, method)
                .AddParameters(parametersCollection)
                .CreateWebReqvest();

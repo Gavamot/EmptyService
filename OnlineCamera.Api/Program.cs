@@ -14,6 +14,7 @@ namespace OnlineCamera.Api
     {
         public static void Main(string[] args)
         {
+            Console.Title = "OnlineCamera.Api";
             CreateWebHostBuilder(args).Build().Run();
         }
 

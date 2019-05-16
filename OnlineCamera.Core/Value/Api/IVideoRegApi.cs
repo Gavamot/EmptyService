@@ -7,7 +7,7 @@ namespace OnlineCamera.Core
 {
     public interface IGetCameraImg
     {
-        Task<CameraResponce> GetImgAsync(Camera camera, Size size, DateTime lastSnapshot, int timeoutMs, CancellationTokenSource source);
+        Task<CameraResponce> GetImgAsync(Camera camera, DateTime lastSnapshot, int timeoutMs, CancellationTokenSource source);
     }
 
     public interface IGetVideoRegInfo

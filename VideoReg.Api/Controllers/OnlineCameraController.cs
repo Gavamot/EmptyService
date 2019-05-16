@@ -8,30 +8,38 @@ using VideoReg.Core;
 
 namespace VideoReg.Api.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
     public class OnlineCameraController : ControllerBase
     {
-        readonly IImgRep imgRep;
+        readonly ICache cache;
         readonly ApiDataTransformer dataTransformer = new ApiDataTransformer();
-        public OnlineCameraController(IImgRep imgRep)
+
+      
+
+        public OnlineCameraController(ICache cache)
         {
-            this.imgRep = imgRep;
+            this.cache = cache;
         }
         
 
-        [Route("[controller]/Img")]
-        public ActionResult<byte[]> GetImg(int number, string timestamp)
+        [Route("/[controller]/Img")]
+        public ActionResult GetImg(int number, string timestamp)
         {
-            var res = imgRep.GetImg(number);
-
-            if (res == null)
+            CameraResponce res; 
+            try
+            {
+                res = cache.GetCamera(number);
+            }
+            catch(KeyNotFoundException e)
+            {
                 return StatusCode(404);
-            if (res.TimeStampt == dataTransformer.ToDate(timestamp))
+            }
+
+            if (res.Timestamp == dataTransformer.ToDate(timestamp))
                 return StatusCode(304); // Not modified
 
-            Response.Headers.Add("x-img-date", dataTransformer.ToString(res.TimeStampt));
-            return res.Img;
+            Response.Headers.Add("x-img-date", dataTransformer.ToString(res.Timestamp));
+            return File(res.Img, "image/jpeg");
         }
     }
 }

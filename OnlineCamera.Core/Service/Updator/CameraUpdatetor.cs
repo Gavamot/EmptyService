@@ -8,10 +8,11 @@ namespace OnlineCamera.Core
     /// <summary>
     /// Обновляет изображение с камер
     /// </summary>
-    public class CameraUpdatetor : AbstractUpdator<Size>
+    public class CameraUpdatetor : AbstractUpdator<Camera>
     {
-        readonly Camera camera;
+        const int SleepIfErrorMs = 200;
 
+        Camera camera;
         IGetCameraImg getCameraImg;
         Config config;
         ICameraCache cameraCache;
@@ -45,8 +46,10 @@ namespace OnlineCamera.Core
             return res;
         }
    
-        protected override async Task UpdateAsync(Size parameters)
+        protected override async Task UpdateAsync(Camera parameters)
         {
+            
+            this.camera = parameters;
             int trys = 0;
             var timeStampt = DateTime.MinValue; 
             while (trys < config.CountOfTrys)
@@ -55,13 +58,13 @@ namespace OnlineCamera.Core
                 {
                     var timer = new Stopwatch();
                     timer.Start();
-                    var cameraResponce = await getCameraImg.GetImgAsync(camera, parameters, timeStampt, config.TimeoutMs, source);
+                    var cameraResponce = await getCameraImg.GetImgAsync(camera, timeStampt, config.TimeoutMs, source);
                     timer.Stop();
 
                     if (cameraResponce == null) // Дата изображения на сервере не изменилась
                     {
                         log.Warning($" {Name} img was repeted ... timespampt={timeStampt.ToShortTimeString() }");
-                        if (await SleepTrueIfCanceled(100))
+                        if (await SleepTrueIfCanceled(SleepIfErrorMs))
                         {
                             return;
                         }
@@ -73,7 +76,7 @@ namespace OnlineCamera.Core
                     var sleepMs = CalculateTimeForSleep((int) timer.ElapsedMilliseconds, config.MaxFps);
                     log.Debug($"{Name} {parameters} - got {cameraResponce}  time execution = {timer.ElapsedMilliseconds} ms | time for sleep = {sleepMs} ms");
 
-                    if (await SleepTrueIfCanceled(1000))
+                    if (await SleepTrueIfCanceled(sleepMs))
                     {
                         return;
                     }
@@ -86,7 +89,7 @@ namespace OnlineCamera.Core
                 catch(TimeoutException e)
                 {
                     log.Error($"{Name} TimeoutException ({e.Message})");
-                    if (await SleepTrueIfCanceled(1000))
+                    if (await SleepTrueIfCanceled(SleepIfErrorMs))
                     {
                         return;
                     }
@@ -98,7 +101,7 @@ namespace OnlineCamera.Core
                 catch (Exception e)
                 {
                     log.Error($"{Name} update error ({e.Message})", e);
-                    if (await SleepTrueIfCanceled(500))
+                    if (await SleepTrueIfCanceled(SleepIfErrorMs))
                     {
                         return;
                     }

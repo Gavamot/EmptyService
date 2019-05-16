@@ -47,26 +47,15 @@ namespace OnlineCamera.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var cacheManager = new CacheManager(new DateService(), Config);
-            var statService = new StatistRegistratorToDb();
-
-            IAppLogger log = new AppLogger();
-            var cameraService = new OnlineCameraService(new Http1Api(), cacheManager, statService, Config, log);
-            try
-            {
-                var videoRegs = GetSettings(Config.IpFile);
-                cameraService.AddVideoRegs(videoRegs);
-            }
-            catch (Exception e)
-            {
-                log.Fatal(e.Message);
-                Environment.Exit(1);
-            }
-
-            services.AddSingleton<IAppLogger>(log);
-            services.AddSingleton<ICache>(cacheManager);
-            services.AddSingleton<IStatistRegistrator>(statService);
-            services.AddSingleton<IOnlineCameraService>(cameraService);
+          
+            services.AddSingleton<IVideoRegApi, Http1Api>();
+            services.AddSingleton<IStatistRegistrator, StatistRegistratorToDb>();
+            services.AddSingleton(Config);
+            services.AddSingleton<IAppLogger>(new AppLogger());
+            services.AddSingleton<ICache, CacheManager>();
+            services.AddSingleton<IStatistRegistrator, StatistRegistratorToDb>();
+            services.AddSingleton<IOnlineCameraService, OnlineCameraService>();
+            services.AddSingleton<IDateService, DateService>();
 
             services.AddApiVersioning(o =>
             {
@@ -80,8 +69,21 @@ namespace OnlineCamera.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider provider)
         {
+            try
+            {
+                var videoRegs = GetSettings(Config.IpFile);
+                provider.GetService<IOnlineCameraService>().AddVideoRegs(videoRegs);
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.Message);
+                Environment.Exit(1);
+            }
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

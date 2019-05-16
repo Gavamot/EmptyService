@@ -13,6 +13,7 @@ namespace OnlineCamera.Core
 
     public interface ICameraCache
     {
+        byte[] GetImg(Camera camera); 
         void SetCamera(Camera camera, CameraResponce snapshot);
     }
 
@@ -22,6 +23,7 @@ namespace OnlineCamera.Core
     }
 
     public interface ICache : IVideoRegInfoCache, ICameraCache, IVideoRegsCache { };
+
 
     public class CacheManager : ICache
     {
@@ -98,5 +100,10 @@ namespace OnlineCamera.Core
                     SourceTimestamp = responce.SourceTimestamp },
                     responce.SourceTimestamp
                 );
+
+        public byte[] GetImg(Camera camera)
+        {
+            return Cameras.Get(camera).Img;
+        }
     }
 }

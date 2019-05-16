@@ -6,7 +6,7 @@ namespace VideoReg.Core
 {
     public class CameraResponce
     {
-        public DateTime TimeStampt { get; set; }
+        public DateTime Timestamp { get; set; }
         public byte[] Img { get; set; }
     }
 }

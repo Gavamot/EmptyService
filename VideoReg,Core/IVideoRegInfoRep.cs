@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace VideoReg.Core
 {
-    public interface ICamerasRep
+    public interface IVideoRegInfoRep
     {
-        Task<CameraSettings[]> GetCameraSettingsAsync();
+        Task<VideoRegResponce> GetInfo();
     }
 }

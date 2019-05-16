@@ -15,4 +15,10 @@
     <ProjectReference Include="..\VideoReg,Core\VideoReg.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="values.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

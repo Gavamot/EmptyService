@@ -3,12 +3,14 @@
     public class Camera
     {
         public Camera() { }
-        public Camera(string videoRegIp, int number)
+        public static Camera CreateCamera(string videoRegIp, int number, Size size)
         {
-            VideoRegIp = videoRegIp;
-            Number = number;
+            return new Camera { VideoRegIp = videoRegIp, Number = number, Size = size };
         }
 
+        public static readonly Camera EmptyCamera = new Camera { VideoRegIp = "", Number = 0 };
+
+        public Size Size { get; set; }
         public string VideoRegIp { get; set; }
         public int Number { get; set; }
 
@@ -31,6 +33,6 @@
             return hash;
         }
 
-        public override string ToString() => $"[{VideoRegIp}] cam={Number}";
+        public override string ToString() => $"[{VideoRegIp}] cam={Number} size={Size}";
     }
 }
