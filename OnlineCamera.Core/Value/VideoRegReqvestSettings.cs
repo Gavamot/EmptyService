@@ -10,5 +10,6 @@ namespace OnlineCamera.Core
     {
         public string Ip { get; set; }
         public Size Size { get; set; } 
+        public int Quality { get; set; }
     }
 }

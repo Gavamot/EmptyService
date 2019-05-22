@@ -3,17 +3,17 @@
     public class Camera
     {
         public Camera() { }
-        public static Camera CreateCamera(string videoRegIp, int number, Size size)
+        public static Camera CreateCamera(string videoRegIp, int number, Size size, int quality)
         {
-            return new Camera { VideoRegIp = videoRegIp, Number = number, Size = size };
+            return new Camera { VideoRegIp = videoRegIp, Number = number, Size = size, Quality = quality };
         }
 
         public static readonly Camera EmptyCamera = new Camera { VideoRegIp = "", Number = 0 };
 
         public Size Size { get; set; }
+        public int Quality { get; set; }
         public string VideoRegIp { get; set; }
         public int Number { get; set; }
-
         public override bool Equals(object obj)
         {
             var cam = obj as Camera;

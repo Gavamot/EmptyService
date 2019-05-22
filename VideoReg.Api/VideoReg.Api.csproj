@@ -6,18 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.13.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VideoReg,Core\VideoReg.Core.csproj" />
+    <ProjectReference Include="..\VideoReg.Core\VideoReg.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="values.json">
+    <Content Update="appsettings.Development.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 

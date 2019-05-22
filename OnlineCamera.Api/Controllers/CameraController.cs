@@ -19,8 +19,9 @@ namespace OnlineCamera.Api.Controllers
 
         // GET api/values
         [HttpGet]
-        [Route("/api/v{version:apiVersion}/[controller]")]
-         public ActionResult Get(string ip, int number)
+        //[Route("/v{version:apiVersion}/[controller]")]
+        [Route("/[controller]/Img")]
+        public ActionResult Get(string ip, int number)
          {
             try
             {

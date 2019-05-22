@@ -30,7 +30,6 @@ namespace VideoReg.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
-          
             services.AddSingleton<IDateService, DateService>();
             services.AddSingleton<IAppLogger>(new AppLogger(loggerFactory.CreateLogger("Main")));
             services.AddSingleton<ICache, CacheManager>();

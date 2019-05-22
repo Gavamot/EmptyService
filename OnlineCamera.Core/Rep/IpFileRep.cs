@@ -50,7 +50,8 @@ namespace OnlineCamera.Core
                             {
                                 Width = int.Parse(sizeStr[0]),
                                 Height = int.Parse(sizeStr[1])
-                            }
+                            },
+                            Quality = int.Parse(v[2])
                         };
                     })
                     .ToArray();

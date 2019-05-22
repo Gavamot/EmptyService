@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using MoreLinq.Extensions;
 using System.Collections.Concurrent;
 using System;
+using System.Net;
+using OnlineCamera.Core.Value.Api;
 
 namespace OnlineCamera.Core
 {
@@ -52,55 +54,56 @@ namespace OnlineCamera.Core
             this.parameters = parameters;
             while (!source.IsCancellationRequested)
             {
+                VideoRegResponce regResponce = null;
                 try
                 {
-                    var regResponce = await api.GetVideoRegInfoAsync(Ip, config.TimeoutMs, source);
-                    cache.SetVideoRegInfo(Ip, new VideoRegInfo
-                    {
-                        Ip = Ip,
-                        BrigadeCode = regResponce.BrigadeCode,
-                        IveSerial = regResponce.IveSerial,
-                        Version = regResponce.Version,
-                        VideoRegSerial = regResponce.VideoRegSerial
-                    }, regResponce.CurrentDate);
-
-                    regResponce.Cameras.ForEach(
-                        camNum => AddNewCameraUpdator(
-                            Camera.CreateCamera(Ip, camNum, parameters.Size)
-                        )
-                    );
-
-                    log.Debug($"{Name} got info [{regResponce}]");
-
-                    // Запускаем процедуру задачу сбора статистики
-                    // statisticRegistrator.RegAsync(Ip, regResponce).Start();
-
-                    if (await SleepTrueIfCanceled(config.VideoRegPollingIntervalSeconds))
-                    {
-                        return;
-                    }
+                    regResponce = await api.GetVideoRegInfoAsync(Ip, config.TimeoutMs, source);
                 }
                 catch (TimeoutException e)
                 {
                     log.Error($"{Name} TimeoutException ({e.Message})");
-                    if (await SleepTrueIfCanceled(1000))
-                    {
-                        return;
-                    }
                 }
                 catch (OperationCanceledException e)
                 {
                     return;
                 }
-                catch (Exception e)
+                catch(WebException e)
                 {
                     log.Error($"{Name} update error ({e.Message})", e);
+                }
+
+                if(regResponce == null) 
+                {
                     if (await SleepTrueIfCanceled(1000))
                     {
                         return;
                     }
-                    // Неизвестная ошибка надо попробывать снова
-                    //log.Info(e.Message);
+                    continue;
+                }
+
+                cache.SetVideoRegInfo(Ip, new VideoRegInfo
+                {
+                    Ip = Ip,
+                    BrigadeCode = regResponce.BrigadeCode,
+                    IveSerial = regResponce.IveSerial,
+                    Version = regResponce.Version,
+                    VideoRegSerial = regResponce.VideoRegSerial
+                }, regResponce.CurrentDate);
+
+                regResponce.Cameras.ForEach(
+                    camNum => AddNewCameraUpdator(
+                        Camera.CreateCamera(Ip, camNum, parameters.Size, parameters.Quality)
+                    )
+                );
+
+                log.Debug($"{Name} got info [{regResponce}]");
+
+                // Запускаем процедуру задачу сбора статистики
+                // statisticRegistrator.RegAsync(Ip, regResponce).Start();
+
+                if (await SleepTrueIfCanceled(config.VideoRegPollingIntervalSeconds))
+                {
+                    return;
                 }
             }
         }
