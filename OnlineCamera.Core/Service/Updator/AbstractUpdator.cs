@@ -61,7 +61,7 @@ namespace OnlineCamera.Core
                 await Task.Delay(ms, token);
                 return false;
             }
-            catch (OperationCanceledException e)
+            catch (OperationCanceledException)
             {
                 return true;
             }

@@ -12,14 +12,13 @@ namespace VideoReg.Core
     {
 
         const int CountOfTrys = 2;
-        const int TimeoutMs = 1000;
-        const int SleepIfError = 200;
+        const int TimeoutMs = 1500;
+        const int SleepIfError = 500;
         const int IntervalMs = 900;
 
         CameraSettings cameraSettings;
 
         readonly IImgRep imgRep;
-        readonly IAppLogger log;
         readonly ICameraCache cameraCache;
 
         public CameraUpdatetor(
@@ -29,7 +28,6 @@ namespace VideoReg.Core
         {
             this.imgRep = imgRep;
             this.cameraCache = cameraCache;
-            this.log = log;
         }
 
         public override string Name => $"CameraUpdatetor {cameraSettings}";

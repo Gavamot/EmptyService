@@ -7,6 +7,6 @@ namespace VideoReg.Core
 {
     public interface IVideoRegInfoRep
     {
-        Task<VideoRegResponce> GetInfo();
+        VideoRegResponce GetInfo();
     }
 }

@@ -23,7 +23,7 @@ namespace OnlineCamera.Core
             this.cache = cache;
         }
 
-        readonly IStatistRegistrator statisticRegistrator;
+        //readonly IStatistRegistrator statisticRegistrator;
         readonly ICache cache;
         readonly IVideoRegApi api;
         readonly Config config;
@@ -32,7 +32,6 @@ namespace OnlineCamera.Core
         string Ip => parameters?.Ip;
 
         readonly ConcurrentDictionary<int, CameraUpdatetor> CameraUpdatoros = new ConcurrentDictionary<int, CameraUpdatetor>();
-        readonly CancellationTokenSource source = new CancellationTokenSource();
 
         public override string Name => ToString();
         public override string ToString() => $"VideoRegUpdator({Ip})";
@@ -64,7 +63,7 @@ namespace OnlineCamera.Core
                 {
                     log.Error($"{Name} TimeoutException ({e.Message})");
                 }
-                catch (OperationCanceledException e)
+                catch (OperationCanceledException)
                 {
                     return;
                 }

@@ -7,6 +7,6 @@ namespace VideoReg.Core
 {
     public interface ICamerasRep
     {
-        Task<CameraSettings[]> GetCameraSettingsAsync();
+        CameraSettings[] GetCameraSettings();
     }
 }

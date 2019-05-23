@@ -29,7 +29,7 @@ namespace VideoReg.Api.Controllers
             {
                 res = cache.GetCamera(number);
             }
-            catch(KeyNotFoundException e)
+            catch(KeyNotFoundException)
             {
                 return StatusCode(404);
             }

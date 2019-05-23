@@ -51,7 +51,7 @@ namespace VideoReg.Core
             {
                 try
                 {
-                    var cameras = await camerasRep.GetCameraSettingsAsync();
+                    var cameras = camerasRep.GetCameraSettings();
                     foreach(var cam in cameras)
                     {
                         AddNewCameraUpdator(cam);

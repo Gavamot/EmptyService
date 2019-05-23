@@ -22,16 +22,16 @@ namespace OnlineCamera.Api.Controllers
         //[Route("/v{version:apiVersion}/[controller]")]
         [Route("/[controller]/Img")]
         public ActionResult Get(string ip, int number)
-         {
+        {
             try
             {
                 var img = cache.GetImg(ip, number);
                 return File(img, "image/jpeg");
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             {
                 return StatusCode(404);
             }
-         }
+        }
     }
 }

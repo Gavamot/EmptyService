@@ -86,6 +86,7 @@ namespace OnlineCamera.Core.Service
                .CreateWebReqvest();
 
             var res = new Responce();
+            request.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
             using (var response = (HttpWebResponse)await request.GetResponseAsync())
             {
                 res.StatusCode = response.StatusCode;

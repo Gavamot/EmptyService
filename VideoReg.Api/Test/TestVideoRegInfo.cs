@@ -6,9 +6,9 @@ using VideoReg.Core;
 
 namespace VideoReg.Api
 {
-    public class TestVideoRegInfo : IVideoRegInfoRep
+   /* public class TestVideoRegInfo : IVideoRegInfoRep
     {
-        public async Task<VideoRegResponce> GetInfo()
+        public VideoRegResponce GetInfo()
         {
             return new VideoRegResponce
             {
@@ -20,5 +20,5 @@ namespace VideoReg.Api
                 VideoRegSerial = "QQQ-QXE123"
             };
         }
-    }
+    }*/
 }

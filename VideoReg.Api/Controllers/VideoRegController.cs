@@ -22,9 +22,9 @@ namespace VideoReg.Api.Controllers
         // GET api/values
         [HttpGet]
         [Route("/[controller]/Info")]
-        public async Task<ActionResult<VideoRegResponce>> GetInfo()
+        public ActionResult<VideoRegResponce> GetInfo()
         {
-            var res = await videoRegInfo.GetInfo();
+            var res = videoRegInfo.GetInfo();
             return res;
         }
 

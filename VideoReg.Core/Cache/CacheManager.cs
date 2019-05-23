@@ -4,20 +4,11 @@ using System.Linq;
 
 namespace VideoReg.Core
 {
-    public interface ICameraCache
-    {
-        void SetCamera(int cameraNumber, byte[] img);
-        /// <exception cref="KeyNotFoundException">Thrown when key not found in collection</exception>
-        CameraResponce GetCamera(int cameraNumber);
-    }
-
-    public interface ICache :  ICameraCache { };
-
     public class CacheManager : ICache
     {
         readonly IDateService dateService;
         const int CameraLifeTimeSeconds = 5; 
-        readonly int lifeTimeMs;
+
         public CacheManager(IDateService dateService)
         {
             this.dateService = dateService;

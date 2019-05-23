@@ -8,7 +8,7 @@ namespace VideoReg.Core.Thrends
 {
     public class IFileTrendsRep : ITrendsRep
     {
-        const string FileName = "values.json";
+        const string FileName = "/home/v-1336/projects/dist/values.json";
 
         public async Task<byte[]> GetThrends()
         {

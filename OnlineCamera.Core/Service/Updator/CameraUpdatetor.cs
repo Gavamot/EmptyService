@@ -30,8 +30,6 @@ namespace OnlineCamera.Core
 
         public override string Name => $"CameraUpdatetor {camera}";
 
-        CancellationTokenSource source;
-
         public event Action<CameraUpdatetor, Camera> OnCompleteUpdate;
 
         // 1 Запрос к регистратору на камеры;
@@ -48,7 +46,6 @@ namespace OnlineCamera.Core
    
         protected override async Task UpdateAsync(Camera parameters)
         {
-            
             this.camera = parameters;
             int trys = 0;
             var timeStampt = DateTime.MinValue; 
@@ -81,7 +78,7 @@ namespace OnlineCamera.Core
                         return;
                     }
                 }
-                catch (CameraNotFoundException e)
+                catch (CameraNotFoundException)
                 {
                     log.Warning($"{Name} camera {camera} have no connect is lost");
                     return;
@@ -94,7 +91,7 @@ namespace OnlineCamera.Core
                         return;
                     }
                 }
-                catch (OperationCanceledException e)
+                catch (OperationCanceledException)
                 {
                     return;
                 }

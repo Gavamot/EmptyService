@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using VideoReg.Api.Implementation;
 using VideoReg.Core;
 using VideoReg.Core.Thrends;
 
@@ -33,11 +34,13 @@ namespace VideoReg.Api
             services.AddSingleton<IDateService, DateService>();
             services.AddSingleton<IAppLogger>(new AppLogger(loggerFactory.CreateLogger("Main")));
             services.AddSingleton<ICache, CacheManager>();
-            services.AddSingleton<ICamerasRep, TestCameraRep>();
+            //services.AddSingleton<ICamerasRep, TestCameraRep>();
+            services.AddSingleton<ICamerasRep, RedisCameraRep>();
             services.AddSingleton<IImgRep, HttpImgRep>();
             services.AddSingleton<VideoRegUpdator>();
             services.AddSingleton<CameraUpdatetor>();
-            services.AddSingleton<IVideoRegInfoRep, TestVideoRegInfo>();
+            //services.AddSingleton<IVideoRegInfoRep, TestVideoRegInfo>();
+            services.AddSingleton<IVideoRegInfoRep, VideoRegInfoRep>();
             services.AddSingleton<ITrendsRep, IFileTrendsRep>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

@@ -21,7 +21,7 @@ namespace VideoReg.Api
         {
             using (var client = httpClientFactory.CreateClient(url))
             {
-                client.Timeout = new TimeSpan(0, 0, timeoutMs/1000);
+                client.Timeout = new TimeSpan(0, 0, timeoutMs / 1000);
                 return await client.GetByteArrayAsync(url);
             }
         }

@@ -30,7 +30,7 @@ namespace OnlineCamera.Core
             {
                 allRows = File.ReadAllLines(fileName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new FileNotFoundException($"File {fileName} not exist or permission denied");
             }
@@ -68,7 +68,7 @@ namespace OnlineCamera.Core
                     })
                     .ToArray();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new FormatException($"Each rows in file {fileName} must have format like [122.1.1.1:33 800x600]");
             }
