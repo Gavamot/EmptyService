@@ -37,8 +37,9 @@ namespace OnlineCamera.Core
         public override string Name => ToString();
         public override string ToString() => $"VideoRegUpdator({Ip})";
 
-        bool AddNewCameraUpdator(Camera camera)
+        bool AddNewCameraUpdator(VideoRegReqvestSettings parameters, int number)
         {
+            var camera = Camera.CreateCamera(parameters, number);
             if (CameraUpdatoros.ContainsKey(camera.Number))
                 return false;
             
@@ -90,11 +91,7 @@ namespace OnlineCamera.Core
                     VideoRegSerial = regResponce.VideoRegSerial
                 }, regResponce.CurrentDate);
 
-                regResponce.Cameras.ForEach(
-                    camNum => AddNewCameraUpdator(
-                        Camera.CreateCamera(Ip, camNum, parameters.Size, parameters.Quality)
-                    )
-                );
+                regResponce.Cameras.ForEach( number => AddNewCameraUpdator(parameters, number));
 
                 log.Debug($"{Name} got info [{regResponce}]");
 

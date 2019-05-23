@@ -17,8 +17,6 @@ namespace VideoReg.Api
             this.httpClientFactory = httpClientFactory;
         }
 
-
-
         public async Task<byte[]> GetImgAsync(string url, int timeoutMs)
         {
             using (var client = httpClientFactory.CreateClient(url))

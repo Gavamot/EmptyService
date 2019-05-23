@@ -25,11 +25,7 @@ namespace OnlineCamera.Api.Controllers
          {
             try
             {
-                var img = cache.GetImg(new Camera()
-                {
-                    VideoRegIp = ip,
-                    Number = number
-                });
+                var img = cache.GetImg(ip, number);
                 return File(img, "image/jpeg");
             }
             catch (KeyNotFoundException e)

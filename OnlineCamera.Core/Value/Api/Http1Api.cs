@@ -12,7 +12,6 @@ using System.Linq;
 
 namespace OnlineCamera.Core.Service
 {
-
     class Responce
     {
         public bool IsSecsessResponce => StatusCode == HttpStatusCode.OK;
@@ -33,11 +32,16 @@ namespace OnlineCamera.Core.Service
             var parametersCollection = new ParametersCollection();
             parametersCollection.Add("number", camera.Number);
             parametersCollection.Add("timestamp", lastSnapshot);
-            parametersCollection.Add("width", camera.Size.Width);
-            parametersCollection.Add("height", camera.Size.Height);
-            parametersCollection.Add("quality", camera.Quality);
 
-            var responce = await RetriveByteArrayFromUrlAsync(camera.VideoRegIp + GET_ONLINE_CAMERA_IMG, HttpMethod.Get, parametersCollection);
+            if (camera.Settings.IsNeedConvert)
+            {
+                parametersCollection.Add("isNeedConvert", camera.Settings.IsNeedConvert);
+                parametersCollection.Add("width", camera.Settings.Size.Width);
+                parametersCollection.Add("height", camera.Settings.Size.Height);
+                parametersCollection.Add("quality", camera.Settings.Quality);
+            }
+
+            var responce = await RetriveByteArrayFromUrlAsync(camera.Settings.Ip + GET_ONLINE_CAMERA_IMG, HttpMethod.Get, parametersCollection);
 
             if(responce.StatusCode == HttpStatusCode.NotFound)
             {

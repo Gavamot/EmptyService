@@ -10,16 +10,6 @@ using VideoReg.Core;
 
 namespace VideoReg.Api.Controllers
 {
-    public class Size
-    {
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public override string ToString()
-        {
-            return $"{Width}x{Height}";
-        }
-    }
-
     [ApiController]
     public class OnlineCameraController : ControllerBase
     {
@@ -32,9 +22,9 @@ namespace VideoReg.Api.Controllers
         }
 
         [Route("/[controller]/Img")]
-        public ActionResult GetImg(int number, string timestamp, [FromQuery]Size size, int quality)
+        public ActionResult GetImg(int number, string timestamp, bool isNeedConvert = false, int width = 0, int height = 0, int quality = 0)
         {
-            CameraResponce res; 
+            CameraResponce res;
             try
             {
                 res = cache.GetCamera(number);
@@ -48,16 +38,21 @@ namespace VideoReg.Api.Controllers
                 return StatusCode(304); // Not modified
 
             Response.Headers.Add("x-img-date", dataTransformer.ToString(res.Timestamp));
-            
 
-            var stream = new MemoryStream();
-            using (MagickImage image = new MagickImage(res.Img))
+            byte[] img = res.Img;
+            if (isNeedConvert)
             {
-                image.Resize(size.Width, size.Height);
-                image.Quality = quality;
-                image.Write(stream);
+                var stream = new MemoryStream();
+                using (MagickImage image = new MagickImage(img))
+                {
+                    image.Resize(width, height);
+                    image.Quality = quality;
+                    image.Write(stream);
+                }
+                img = stream.ToArray();
             }
-            return File(stream.ToArray(), "image/jpeg");
+
+            return File(img, "image/jpeg");
         }
     }
 }

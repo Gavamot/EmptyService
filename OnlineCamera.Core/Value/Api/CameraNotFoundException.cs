@@ -11,7 +11,7 @@ namespace OnlineCamera.Core
         }
 
         public CameraNotFoundException(Camera camera)
-           : this(camera.VideoRegIp, camera.Number)
+           : this(camera.Settings.Ip , camera.Number)
         {
 
         }

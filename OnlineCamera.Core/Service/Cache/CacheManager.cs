@@ -13,9 +13,12 @@ namespace OnlineCamera.Core
 
     public interface ICameraCache
     {
-        byte[] GetImg(Camera camera); 
+        byte[] GetImg(Camera camera);
+        byte[] GetImg(string ip, int number);
         void SetCamera(Camera camera, CameraResponce snapshot);
     }
+
+
 
     public interface IVideoRegsCache
     {
@@ -103,6 +106,12 @@ namespace OnlineCamera.Core
 
         public byte[] GetImg(Camera camera)
         {
+            return Cameras.Get(camera).Img;
+        }
+
+        public byte[] GetImg(string ip, int number)
+        {
+            var camera = Camera.CreateCamera(new VideoRegReqvestSettings() { Ip = ip }, number);
             return Cameras.Get(camera).Img;
         }
     }

@@ -37,22 +37,34 @@ namespace OnlineCamera.Core
 
             try
             {
-                var regex = new Regex(@"^https?://(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+ ([0-9]+)x([0-9]+)$");
                 return allRows
-                    .Select(x => regex.Match(x).Value)
+                    .Where(x => !x.StartsWith("//"))
+                    .Select(x=>x.Trim())
                     .Select(x => {
                         var v = x.Split(' ');
-                        var sizeStr = v[1].Split('x');
-                        return new VideoRegReqvestSettings
+                        if (v.Length > 2) // Нужно конвертировать
                         {
-                            Ip = v[0],
-                            Size = new Size
+                            var sizeStr = v[1].Split('x');
+                            return new VideoRegReqvestSettings
                             {
-                                Width = int.Parse(sizeStr[0]),
-                                Height = int.Parse(sizeStr[1])
-                            },
-                            Quality = int.Parse(v[2])
-                        };
+                                Ip = v[0],
+                                Size = new Size
+                                {
+                                    Width = int.Parse(sizeStr[0]),
+                                    Height = int.Parse(sizeStr[1])
+                                },
+                                Quality = int.Parse(v[2]),
+                                IsNeedConvert = true
+                            };
+                        }
+                        else // Без конвертации
+                        {
+                            return new VideoRegReqvestSettings
+                            {
+                                Ip = v[0],
+                                IsNeedConvert = false
+                            };
+                        }                   
                     })
                     .ToArray();
             }
